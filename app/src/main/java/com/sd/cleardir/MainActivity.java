@@ -28,19 +28,28 @@ public class MainActivity extends AppCompatActivity {
 
     // 点击开始清理
     public void onClick(View v) {
-        clearDir("/storage/emulated/0/Download");
+        File pic = new File("/storage/emulated/0/Pictures");
+        if (!pic.exists()) {
+            Toast.makeText(getApplicationContext(), "清空目录失败：" + pic + "不存在！", Toast.LENGTH_SHORT).show();
+        } else {
+            for (File file : pic.listFiles()) {
+                if (file.isFile()) {
+                    deleteSingleFile(file.getAbsolutePath());
+                } else if (file.isDirectory()) {
+                    clearDir(file.getAbsolutePath());
+                }
+            }
+        }
         clearDir("/storage/emulated/0/DCIM/Screenshots");
-        clearDir("/storage/emulated/0/Pictures");
+        clearDir("/storage/emulated/0/Download");
         clearDir("/storage/emulated/0/Tencent/QQ_Images");
         Toast.makeText(getApplicationContext(), "清理结束", Toast.LENGTH_SHORT).show();
     }
 
     // 清空文件夹
     private boolean clearDir(String filePath) {
-        if (!filePath.endsWith(File.separator))
-            filePath = filePath + File.separator;
         File dirFile = new File(filePath);
-        if ((!dirFile.exists()) || (!dirFile.isDirectory())) {
+        if (!dirFile.exists() || !dirFile.isDirectory()) {
             Toast.makeText(getApplicationContext(), "清空目录失败：" + filePath + "不存在！", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (!flag) {
-            Toast.makeText(getApplicationContext(), "删除目录失败！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "清空目录失败！", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -71,11 +80,11 @@ public class MainActivity extends AppCompatActivity {
             if (file.delete()) {
                 return true;
             } else {
-                Toast.makeText(getApplicationContext(), "删除单个文件" + filePath$Name + "失败！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "删除文件" + filePath$Name + "失败！", Toast.LENGTH_SHORT).show();
                 return false;
             }
         } else {
-            Toast.makeText(getApplicationContext(), "删除单个文件失败：" + filePath$Name + "不存在！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "删除文件失败：" + filePath$Name + "不存在！", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
@@ -85,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
         if (!clearDir(filePath)) {
             return false;
         }
-        if (!filePath.endsWith(File.separator))
-            filePath = filePath + File.separator;
         File dirFile = new File(filePath);
         if (dirFile.delete()) {
             return true;
