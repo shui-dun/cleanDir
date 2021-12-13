@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 点击开始清理
     public void onClick(View v) {
         clearDir("/storage/emulated/0/Download");
         clearDir("/storage/emulated/0/DCIM/Screenshots");
@@ -34,31 +35,23 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "清理结束", Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * 清空文件夹
-     */
+    // 清空文件夹
     private boolean clearDir(String filePath) {
-        // 如果dir不以文件分隔符结尾，自动添加文件分隔符
         if (!filePath.endsWith(File.separator))
             filePath = filePath + File.separator;
         File dirFile = new File(filePath);
-        // 如果dir对应的文件不存在，或者不是一个目录，则退出
         if ((!dirFile.exists()) || (!dirFile.isDirectory())) {
             Toast.makeText(getApplicationContext(), "清空目录失败：" + filePath + "不存在！", Toast.LENGTH_SHORT).show();
             return false;
         }
         boolean flag = true;
-        // 删除文件夹中的所有文件包括子目录
         File[] files = dirFile.listFiles();
         for (File file : files) {
-            // 删除子文件
             if (file.isFile()) {
                 flag = deleteSingleFile(file.getAbsolutePath());
                 if (!flag)
                     break;
-            }
-            // 删除子目录
-            else if (file.isDirectory()) {
+            } else if (file.isDirectory()) {
                 flag = deleteDir(file.getAbsolutePath());
                 if (!flag)
                     break;
@@ -71,12 +64,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * 删除单个文件
-     */
+    // 删除单个文件
     private boolean deleteSingleFile(String filePath$Name) {
         File file = new File(filePath$Name);
-        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
         if (file.exists() && file.isFile()) {
             if (file.delete()) {
                 return true;
@@ -90,14 +80,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * 删除目录
-     */
+    // 删除目录
     private boolean deleteDir(String filePath) {
         if (!clearDir(filePath)) {
             return false;
         }
-        // 删除当前目录
         if (!filePath.endsWith(File.separator))
             filePath = filePath + File.separator;
         File dirFile = new File(filePath);
