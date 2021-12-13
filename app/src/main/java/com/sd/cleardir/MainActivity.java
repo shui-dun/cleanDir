@@ -28,22 +28,34 @@ public class MainActivity extends AppCompatActivity {
 
     // 点击开始清理
     public void onClick(View v) {
-        File pic = new File("/storage/emulated/0/Pictures");
-        if (!pic.exists()) {
-            Toast.makeText(getApplicationContext(), "清空目录失败：" + pic + "不存在！", Toast.LENGTH_SHORT).show();
+        clearDirWithoutDirs("/storage/emulated/0/Pictures");
+        clearDirWithoutDirs("/storage/emulated/0/Telegram");
+        clearDirWithoutDirs("/storage/emulated/0/Tencent");
+        clearDir("/storage/emulated/0/DCIM/Screenshots");
+        clearDir("/storage/emulated/0/Download");
+        Toast.makeText(getApplicationContext(), "清理结束", Toast.LENGTH_SHORT).show();
+    }
+
+    // 清空文件夹，但只删除文件，不删除文件夹
+    private boolean clearDirWithoutDirs(String filePath) {
+        File dirFile = new File(filePath);
+        if (!dirFile.exists() || !dirFile.isDirectory()) {
+            Toast.makeText(getApplicationContext(), "清空目录失败：" + dirFile + "不存在！", Toast.LENGTH_SHORT).show();
+            return false;
         } else {
-            for (File file : pic.listFiles()) {
+            for (File file : dirFile.listFiles()) {
                 if (file.isFile()) {
-                    deleteSingleFile(file.getAbsolutePath());
+                    if (!deleteSingleFile(file.getAbsolutePath())) {
+                        return false;
+                    }
                 } else if (file.isDirectory()) {
-                    clearDir(file.getAbsolutePath());
+                    if (!clearDirWithoutDirs(file.getAbsolutePath())) {
+                        return false;
+                    }
                 }
             }
         }
-        clearDir("/storage/emulated/0/DCIM/Screenshots");
-        clearDir("/storage/emulated/0/Download");
-        clearDir("/storage/emulated/0/Tencent/QQ_Images");
-        Toast.makeText(getApplicationContext(), "清理结束", Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     // 清空文件夹
