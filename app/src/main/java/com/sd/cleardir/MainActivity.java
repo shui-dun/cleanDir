@@ -18,9 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (Environment.isExternalStorageManager()) {
-            Toast.makeText(this, "已获得访问所有文件权限", Toast.LENGTH_SHORT).show();
-        } else {
+        if (!Environment.isExternalStorageManager()) {
             Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
             startActivity(intent);
         }
@@ -32,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         clearDirWithoutDirs("/storage/emulated/0/Telegram");
         clearDirWithoutDirs("/storage/emulated/0/Tencent");
         clearDir("/storage/emulated/0/DCIM/Screenshots");
+        clearDir("/storage/emulated/0/DCIM/ScreenRecorder");
         clearDir("/storage/emulated/0/Download");
         Toast.makeText(getApplicationContext(), "清理结束", Toast.LENGTH_SHORT).show();
     }
